@@ -68,7 +68,7 @@ class PostUpdateRepository
 			if ( !$filtered ) $args['post_parent'] = intval($parent);
 
 			// Update post hook causes server timeout on large sites, but may be required by some users
-			if ( $update_post_hook ) wp_update_post(['ID' => $post_id]);
+			if ( $update_post_hook ) wp_update_post( [ 'ID' => $post_id, 'post_parent' => (int) $parent ] );
 
 			if ( !$filtered ) :
 				$query = $wpdb->prepare(
