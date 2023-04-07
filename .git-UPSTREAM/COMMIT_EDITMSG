@@ -1,0 +1,30 @@
+Including the vendor folder as it is not part of the source code rather it's probably added as part of the CI/CD process
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Author:    Kyle Veldhuizen <kveldhuizen@carleton.edu>
+#
+# interactive rebase in progress; onto 3023ec7
+# Last commands done (8 commands done):
+#    pick a8c4a26 Updating composer/installer version to be compatible with SQ1
+#    pick c8772b7 Including the vendor folder as it is not part of the source code rather it's probably added as part of the CI/CD process
+# No commands remaining.
+# You are currently rebasing branch 'master' on '3023ec7'.
+#
+# Changes to be committed:
+#	modified:   .gitignore
+#	new file:   vendor/autoload.php
+#	new file:   vendor/composer/ClassLoader.php
+#	new file:   vendor/composer/InstalledVersions.php
+#	new file:   vendor/composer/LICENSE
+#	new file:   vendor/composer/autoload_classmap.php
+#	new file:   vendor/composer/autoload_namespaces.php
+#	new file:   vendor/composer/autoload_psr4.php
+#	new file:   vendor/composer/autoload_real.php
+#	new file:   vendor/composer/autoload_static.php
+#	new file:   vendor/composer/installed.json
+#	new file:   vendor/composer/installed.php
+#	new file:   vendor/composer/installers
+#	new file:   vendor/composer/platform_check.php
+#

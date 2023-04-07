@@ -1,0 +1,9 @@
+0000000000000000000000000000000000000000 1af94db1233ac2392aa3cfb2abd15662a1d3de82 David Huyck <dhuyck@carleton.edu> 1581521011 -0600	clone: from git@github.com:carleton/wp-nested-pages.git
+1af94db1233ac2392aa3cfb2abd15662a1d3de82 149d9ec17f0f91ff940dc5c703b12df16e6e9da0 David Huyck <dhuyck@carleton.edu> 1581538369 -0600	commit: Process a change in `post_parent` through `wp_update_post()` so any hooks related to that change can be properly triggered
+149d9ec17f0f91ff940dc5c703b12df16e6e9da0 85b43d254115552f62de319977da409676bb0c05 David Huyck <dhuyck@carleton.edu> 1581968349 -0600	commit: Update post-`gulp`
+85b43d254115552f62de319977da409676bb0c05 f0684862170fe584e85b325d13c433eafc5c01fd David Huyck <dhuyck@carleton.edu> 1582838102 -0600	commit: Try to use Composer "replace" syntax to get this version to supplant the official version
+f0684862170fe584e85b325d13c433eafc5c01fd 149d9ec17f0f91ff940dc5c703b12df16e6e9da0 David Huyck <dhuyck@carleton.edu> 1582897477 -0600	reset: moving to 149d9ec17f0f91ff940dc5c703b12df16e6e9da0
+149d9ec17f0f91ff940dc5c703b12df16e6e9da0 f0684862170fe584e85b325d13c433eafc5c01fd David Huyck <dhuyck@carleton.edu> 1582897548 -0600	pull origin master: Fast-forward
+f0684862170fe584e85b325d13c433eafc5c01fd a4b0557a6c0b6deb5235e24be11aeecb50c92b2b David Huyck <dhuyck@carleton.edu> 1582897554 -0600	revert: Revert "Try to use Composer "replace" syntax to get this version to supplant the official version"
+a4b0557a6c0b6deb5235e24be11aeecb50c92b2b b3e3ce1c70ebb75c4b09d59e0b48524bf76924b8 David Huyck <dhuyck@carleton.edu> 1582897560 -0600	revert: Revert "Update post-`gulp`"
+b3e3ce1c70ebb75c4b09d59e0b48524bf76924b8 c8772b7a6fda112b2a94cc23dde270a82d9dab18 David Huyck <dhuyck@carleton.edu> 1680798711 -0500	pull: Fast-forward

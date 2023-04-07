@@ -1,4 +1,4 @@
-<?php
+<?php 
 namespace NestedPages\Entities\Post;
 
 use NestedPages\Form\Validation\Validation;
@@ -9,7 +9,7 @@ use NestedPages\Entities\User\UserRepository;
 /**
 * Post Create/Update Methods
 */
-class PostUpdateRepository
+class PostUpdateRepository 
 {
 	/**
 	* Validation Class
@@ -56,48 +56,47 @@ class PostUpdateRepository
 	{
 		$this->validation->validatePostIDs($posts);
 		$post_type = get_post_type($posts[0]['id']);
+		$update_post_hook = apply_filters('nestedpages_use_update_post', false);
 		if ( !$this->user_repo->canSortPosts($post_type) ) return;
 		global $wpdb;
 		foreach( $posts as $key => $post )
 		{
 			$post_id = sanitize_text_field($post['id']);
-			if ( wp_get_post_parent_id( $post_id ) !== $parent ) {
-				wp_update_post( [
-					'ID'          => $post_id,
-					'post_parent' => $parent,
-					'menu_order'  => $key,
-					'post_type'   => get_post_type( $post_id ),
-				] );
-			} else {
-				$original_modifed_date     = get_post_modified_time( 'Y-m-d H:i:s', false, $post_id );
-				$original_modifed_date_gmt = get_post_modified_time( 'Y-m-d H:i:s', true, $post_id );
+			$original_modifed_date = get_post_modified_time('Y-m-d H:i:s', false, $post_id);
+			$original_modifed_date_gmt = get_post_modified_time('Y-m-d H:i:s', true, $post_id);
+			
+			if ( !$filtered ) $args['post_parent'] = intval($parent);
 
-				// Reset the modified date to the last modified date
-				if ( !$filtered ) :$query = $wpdb->prepare(
+			// Update post hook causes server timeout on large sites, but may be required by some users
+			if ( $update_post_hook ) wp_update_post(['ID' => $post_id]);
+
+			if ( !$filtered ) :
+				$query = $wpdb->prepare(
 					"UPDATE $wpdb->posts 
-				SET menu_order = '%d', post_parent = '%d', post_modified = '%s', post_modified_gmt = '%s' 
-				WHERE ID = '%d'",
-					intval( $key ),
-					intval( $parent ),
-					$original_modifed_date,
-					$original_modifed_date_gmt,
-					intval( $post_id )
-				);else : // The posts are filtered, don't update the parent
+					SET menu_order = '%d', post_parent = '%d', post_modified = '%s', post_modified_gmt = '%s' 
+					WHERE ID = '%d'", 
+					intval($key), 
+					intval($parent),
+					$original_modifed_date, 
+					$original_modifed_date_gmt, 
+					intval($post_id)
+				);
+			else : // The posts are filtered, don't update the parent
 				$query = $wpdb->prepare(
 					"UPDATE $wpdb->posts 
 					SET menu_order = '%d', post_modified = '%s', post_modified_gmt = '%s' 
-					WHERE ID = '%d'",
-					intval($key),
-					$original_modifed_date,
-					$original_modifed_date_gmt,
+					WHERE ID = '%d'", 
+					intval($key), 
+					$original_modifed_date, 
+					$original_modifed_date_gmt, 
 					intval($post_id)
-				);
+				); 
 			endif;
 
-				$wpdb->query( $query );
-			}
+			$wpdb->query( $query );
 			do_action('nestedpages_post_order_updated', $post_id, $parent, $key, $filtered);
 
+			do_action('nestedpages_post_order_updated', $post_id, $parent, $key, $filtered);
 			if ( isset($post['children']) ) $this->updateOrder($post['children'], $post_id);
 		}
 		do_action('nestedpages_posts_order_updated', $posts, $parent);
@@ -119,19 +118,19 @@ class PostUpdateRepository
 
 		$this->validation->validateCustomFields($data);
 
-		if ( isset($data['post_title']) && $data['post_title'] == "" ){
+		if ( isset($data['post_title']) && $data['post_title'] == "" ){ 
 			$this->validation->checkEmpty($data['post_title'], __('Title', 'wp-nested-pages'));
 		} elseif ( isset($data['post_title']) ){
 			$updated_post['post_title'] = sanitize_text_field($data['post_title']);
 		}
 
-		if ( isset($data['post_name']) )
+		if ( isset($data['post_name']) ) 
 			$updated_post['post_name'] = sanitize_text_field($data['post_name']);
 
-		if ( isset($data['post_author']) )
+		if ( isset($data['post_author']) ) 
 			$updated_post['post_author'] = sanitize_text_field($data['post_author']);
 
-		if ( isset($data['post_password']) )
+		if ( isset($data['post_password']) ) 
 			$updated_post['post_password'] = sanitize_text_field($data['post_password']);
 
 		if ( !$this->post_type_repo->standardFieldDisabled('allow_comments', sanitize_text_field($data['post_type'])) ){
@@ -175,6 +174,7 @@ class PostUpdateRepository
 		$this->updateLinkTarget($data);
 		$this->updateTitleAttribute($data);
 		$this->updateNavCSS($data);
+		$this->updateNavCustomUrl($data);
 
 		return true;
 	}
@@ -188,9 +188,9 @@ class PostUpdateRepository
 	{
 		if ( isset($data['page_template']) && current_user_can('edit_post', $data['post_id']) ){
 			$template = sanitize_text_field($data['page_template']);
-			update_post_meta(
-				$data['post_id'],
-				'_wp_page_template',
+			update_post_meta( 
+				$data['post_id'], 
+				'_wp_page_template', 
 				$template
 			);
 		}
@@ -206,9 +206,9 @@ class PostUpdateRepository
 		if ( !current_user_can('edit_post', $data['post_id']) ) return;
 		$status = ( isset($data['nav_status']) && $data['nav_status'] == 'hide' ) ? 'hide' : 'show';
 		$id = ( isset($data['post_id']) ) ? $data['post_id'] : $this->new_id;
-		update_post_meta(
-			$id,
-			'_np_nav_status',
+		update_post_meta( 
+			$id, 
+			'_np_nav_status', 
 			$status
 		);
 	}
@@ -222,7 +222,7 @@ class PostUpdateRepository
 	{
 		if ( !current_user_can('edit_post', $data['post_id']) ) return;
 		if ( $this->post_type_repo->standardFieldDisabled('hide_in_np', sanitize_text_field($data['post_type'])) ) return;
-
+		
 		$status = ( isset($data['nested_pages_status']) && $data['nested_pages_status'] == 'hide' ) ? 'hide' : 'show';
 		$id = ( isset($data['post_id']) ) ? $data['post_id'] : $this->new_id;
 		update_post_meta(
@@ -242,9 +242,9 @@ class PostUpdateRepository
 		if ( !current_user_can('edit_post', $data['post_id']) ) return;
 		if ( isset($data['np_nav_title']) ){
 			$title = sanitize_text_field($data['np_nav_title']);
-			update_post_meta(
-				$data['post_id'],
-				'_np_nav_title',
+			update_post_meta( 
+				$data['post_id'], 
+				'_np_nav_title', 
 				$title
 			);
 		}
@@ -260,10 +260,29 @@ class PostUpdateRepository
 		if ( !current_user_can('edit_post', $data['post_id']) ) return;
 		if ( isset($data['np_nav_css_classes']) ){
 			$css_classes = sanitize_text_field($data['np_nav_css_classes']);
-			update_post_meta(
-				$data['post_id'],
-				'_np_nav_css_classes',
+			update_post_meta( 
+				$data['post_id'], 
+				'_np_nav_css_classes', 
 				$css_classes
+			);
+		}
+	}
+
+	/**
+	* Update Nested Pages Menu Custom URL
+	* @since 3.2.0
+	* @param array data
+	*/
+	private function updateNavCustomUrl($data)
+	{
+		if ( !current_user_can('edit_post', $data['post_id']) ) return;
+		if ( isset($data['np_nav_custom_url']) ){
+			$url_input = $data['np_nav_custom_url'];
+			$url = ( $url_input == '#' ) ? '#' : esc_url($data['np_nav_custom_url']);
+			update_post_meta( 
+				$data['post_id'], 
+				'_np_nav_custom_url', 
+				$url
 			);
 		}
 	}
@@ -278,9 +297,9 @@ class PostUpdateRepository
 		if ( !current_user_can('edit_post', $data['post_id']) ) return;
 		if ( isset($data['np_title_attribute']) ){
 			$title_attr = sanitize_text_field($data['np_title_attribute']);
-			update_post_meta(
-				$data['post_id'],
-				'_np_title_attribute',
+			update_post_meta( 
+				$data['post_id'], 
+				'_np_title_attribute', 
 				$title_attr
 			);
 		}
@@ -296,9 +315,9 @@ class PostUpdateRepository
 			if ( strpos($key, 'np_custom_') !== false) {
 				$field_key = str_replace('np_custom_', '', $key);
 				if ( !current_user_can('edit_post', $data['post_id']) ) continue;
-				update_post_meta(
-					$data['post_id'],
-					$field_key,
+				update_post_meta( 
+					$data['post_id'], 
+					$field_key, 
 					sanitize_text_field($data[$key])
 				);
 			}
@@ -387,9 +406,9 @@ class PostUpdateRepository
 		if ( !current_user_can('edit_post', $data['post_id']) ) return;
 		$link_target = ( isset($data['link_target']) && $data['link_target'] == "_blank" ) ? "_blank" : "";
 		$id = ( isset($data['post_id']) ) ? $data['post_id'] : $this->new_id;
-		update_post_meta(
-			$id,
-			'_np_link_target',
+		update_post_meta( 
+			$id, 
+			'_np_link_target', 
 			$link_target
 		);
 	}
