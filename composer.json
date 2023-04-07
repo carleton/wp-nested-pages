@@ -1,7 +1,11 @@
 {
-	"name": "kylephillips/nestedpages",
+	"name": "carleton-college/wp-nested-pages",
 	"description": "Nested Pages for WordPress",
-	"keywords": ["wordpress", "plugin", "nested pages"],
+	"keywords": [
+		"wordpress",
+		"plugin",
+		"nested pages"
+	],
 	"homepage": "https://nestedpages.com",
 	"license": "GPL",
 	"authors": [
@@ -13,11 +17,16 @@
 	"type": "wordpress-plugin",
 	"require": {
 		"php": ">=5.4.0",
-		"composer/installers": "v1.0.6"
+		"composer/installers": "^1.4.0"
 	},
 	"autoload": {
-		"psr-4" : {
-			"NestedPages\\" : "app/"
+		"psr-4": {
+			"NestedPages\\": "app/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true
 		}
 	}
 }
