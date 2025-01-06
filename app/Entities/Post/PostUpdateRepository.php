@@ -62,40 +62,48 @@ class PostUpdateRepository
 		foreach( $posts as $key => $post )
 		{
 			$post_id = sanitize_text_field($post['id']);
-			$original_modifed_date = get_post_modified_time('Y-m-d H:i:s', false, $post_id);
-			$original_modifed_date_gmt = get_post_modified_time('Y-m-d H:i:s', true, $post_id);
-			
-			if ( !$filtered ) $args['post_parent'] = intval($parent);
+            if ( wp_get_post_parent_id( $post_id ) !== $parent ) {
+                wp_update_post( [
+                    'ID'          => $post_id,
+                    'post_parent' => $parent,
+                    'menu_order'  => $key,
+                    'post_type'   => get_post_type( $post_id ),
+                ] );
+            } else {
+                $original_modifed_date = get_post_modified_time('Y-m-d H:i:s', false, $post_id);
+                $original_modifed_date_gmt = get_post_modified_time('Y-m-d H:i:s', true, $post_id);
 
-			// Update post hook causes server timeout on large sites, but may be required by some users
-			if ( $update_post_hook ) wp_update_post(['ID' => $post_id]);
+                if (!$filtered) $args['post_parent'] = intval($parent);
 
-			if ( !$filtered ) :
-				$query = $wpdb->prepare(
-					"UPDATE $wpdb->posts 
+                // Update post hook causes server timeout on large sites, but may be required by some users
+                if ($update_post_hook) wp_update_post(['ID' => $post_id, 'post_parent' => (int)$parent]);
+
+                if (!$filtered) :
+                    $query = $wpdb->prepare(
+                        "UPDATE $wpdb->posts 
 					SET menu_order = '%d', post_parent = '%d', post_modified = '%s', post_modified_gmt = '%s' 
-					WHERE ID = '%d'", 
-					intval($key), 
-					intval($parent),
-					$original_modifed_date, 
-					$original_modifed_date_gmt, 
-					intval($post_id)
-				);
-			else : // The posts are filtered, don't update the parent
-				$query = $wpdb->prepare(
-					"UPDATE $wpdb->posts 
+					WHERE ID = '%d'",
+                        intval($key),
+                        intval($parent),
+                        $original_modifed_date,
+                        $original_modifed_date_gmt,
+                        intval($post_id)
+                    );
+                else : // The posts are filtered, don't update the parent
+                    $query = $wpdb->prepare(
+                        "UPDATE $wpdb->posts 
 					SET menu_order = '%d', post_modified = '%s', post_modified_gmt = '%s' 
-					WHERE ID = '%d'", 
-					intval($key), 
-					$original_modifed_date, 
-					$original_modifed_date_gmt, 
-					intval($post_id)
-				); 
-			endif;
+					WHERE ID = '%d'",
+                        intval($key),
+                        $original_modifed_date,
+                        $original_modifed_date_gmt,
+                        intval($post_id)
+                    );
+                endif;
 
-			$wpdb->query( $query );
-			do_action('nestedpages_post_order_updated', $post_id, $parent, $key, $filtered);
-
+                $wpdb->query($query);
+                do_action('nestedpages_post_order_updated', $post_id, $parent, $key, $filtered);
+            }
 			wp_cache_delete( $post_id, 'posts' );
 			
 			if ( isset($post['children']) ) $this->updateOrder($post['children'], $post_id);
